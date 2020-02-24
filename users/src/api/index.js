@@ -1,22 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const controller = require('./controller');
+const controller = require('../controller');
 const handlers = require('./handlers');
-const USER = 'user';
+const Logger = require('../utils/Logger');
+
+const logger = new Logger();
 
 const app = express();
 
-function setHandlers() {
-    handlers[USER].forEach(handler => {
-        app[handler](`/${USER}`, (req, res) => {
-            
-        })
-    });
-}
+const start = (config) => {
+  const { host = 'localhost', port = 8000 } = config;
 
-const start = ({ host, port }) => {
-    app.use(bodyParser.json());
-}
+  app.use(bodyParser.json());
+  controller.setHandlers(handlers, app, config);
+
+  app.listen(port, host, () => {
+    logger.info(`server listening on ${host}:${port}`);
+  });
+};
 
 module.exports = start;
