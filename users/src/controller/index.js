@@ -8,7 +8,7 @@ function setController(collection, app, handler, currRepository) {
     const {
       method, path, dataInBody, dataInParams,
     } = handlerBody;
-    logger.info(`path created: /${collection}${path}`);
+    logger.info(`path created: /${collection}${path} => ${method.toUpperCase()}`);
     app[method](`/${collection}${path}`, (req, res) => {
       if (dataInBody && dataInParams) {
         currRepository[handlerKey](req.params, req.body)
