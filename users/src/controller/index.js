@@ -6,27 +6,25 @@ const logger = new Logger();
 function setController(collection, app, handler, currRepository) {
   Object.entries(handler).forEach(([handlerKey, handlerBody]) => {
     const {
-      headers = {}, method, path, dataInBody, dataInParams,
+      method, path, dataInBody, dataInParams,
     } = handlerBody;
-    logger.info(`path created: /${collection}${path}`);
+    logger.info(`path created: /${collection}${path} => ${method.toUpperCase()}`);
     app[method](`/${collection}${path}`, (req, res) => {
-      req.headers = headers;
-
-      let response;
       if (dataInBody && dataInParams) {
-        response = currRepository[handlerKey](req.params, req.body);
+        currRepository[handlerKey](req.params, req.body)
+          .then((msg) => res.status(200).json(msg))
+          .catch((err) => res.status(500).send(err));
+      } else if (dataInBody) {
+        currRepository[handlerKey](req.body)
+          .then((msg) => res.status(200).json({ id: msg }))
+          .catch((err) => res.status(500).send(err));
+      } else if (dataInParams) {
+        currRepository[handlerKey](req.params)
+          .then((msg) => res.status(200).json(msg))
+          .catch((err) => res.status(404).send(err));
+      } else {
+        res.status(400).send('Bad Request');
       }
-      if (dataInBody) {
-        response = currRepository[handlerKey](req.body);
-      }
-      if (dataInParams) {
-        response = currRepository[handlerKey](req.params);
-      }
-      if (response) {
-        res.status(200).send(response);
-      }
-
-      res.status(200).send('success');
     });
   });
 }

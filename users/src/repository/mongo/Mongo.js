@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { ObjectId, MongoClient } = require('mongodb');
 
 const Repository = require('../Repository');
 const Logger = require('../../utils/Logger');
@@ -15,30 +15,36 @@ class Mongo extends Repository {
   }
 
   create(user) {
-    this.collection
+    return this.collection
       .insertOne(user)
-      .then(() => logger.info('store succesfully'))
+      .then((result) => result.insertedId)
       .catch((err) => logger.error(err));
   }
 
   get({ userId }) {
     return this.collection
-      .findOne({ id: userId })
-      .then((response) => response.data)
+      .findOne({ _id: ObjectId(userId) })
+      .then((response) => response)
       .catch((err) => logger.error(err));
   }
 
   update({ userId }, data) {
-    this.collection
-      .updateOne({ id: userId }, { $set: data })
-      .then(() => logger.info('updated succesfully'))
+    return this.collection
+      .updateOne({ _id: ObjectId(userId) }, { $set: data })
+      .then(() => {
+        logger.info(`user with id: ${userId} updated successfully`);
+        return {};
+      })
       .catch((err) => logger.error(err));
   }
 
   delete({ userId }) {
-    this.collection
-      .deleteOne({ id: userId })
-      .then(() => logger.info('deleted succesfully'))
+    return this.collection
+      .deleteOne({ _id: ObjectId(userId) })
+      .then(() => {
+        logger.info(`user with id: ${userId} deleted successfully`);
+        return {};
+      })
       .catch((err) => logger.error(err));
   }
 
