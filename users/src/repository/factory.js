@@ -15,7 +15,7 @@ const create = (config) => {
   }
 
   if (IMPLEMENTATIONS.includes(repoType)) {
-    repositories[repoType] = Repository.create(repoType, config);
+    repositories[repoType] = Repository.create(type, config);
   } else {
     repositories[repoType] = Repository.create(FAKE);
   }
