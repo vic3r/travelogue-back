@@ -6,5 +6,5 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 8080
-CMD ["npm", "run start"]
+EXPOSE 8000
+CMD ["npm", "run", "start-docker"]

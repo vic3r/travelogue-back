@@ -31,6 +31,7 @@ function setController(collection, app, handler, currRepository) {
 
 const setHandlers = (handlers, app, config) => {
   Object.entries(handlers).forEach(([collection, handler]) => {
+    // improve this, collections implies to have several connections to the database
     const repositoryConfig = { ...config.repository, collection };
     repository.create(repositoryConfig).then((currRepository) => {
       setController(collection, app, handler, currRepository);
